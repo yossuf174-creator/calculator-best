@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>آلة حاسبة — الأفضل</title>
+<style>
+  :root{
+    --bg:#071827; --panel:#0f1a24; --accent:#06d6a0; --op:#ffb703; --muted:#9fb2bd;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
+  html,body{height:100%;margin:0;background:linear-gradient(135deg,#071827,#0b2430);color:#e6eef6}
+  .wrap{min-height:100vh;display:grid;place-items:center;padding:18px}
+  .app{width:min(920px,98%);display:grid;grid-template-columns:1fr 320px;gap:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.04)}
+  .calc{display:flex;flex-direction:column;gap:12px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .title{font-weight:700}
+  .mode{border:none;background:rgba(255,255,255,0.04);color:inherit;padding:8px 10px;border-radius:10px;cursor:pointer}
+  .display{height:76px;border-radius:12px;border:none;padding:14px 16px;background:linear-gradient(180deg,#081821,#07121a);color:var(--accent);font-size:1.8rem;text-align:left;direction:ltr;box-shadow:inset 0 8px 18px rgba(0,0,0,0.45)}
+  .controls{display:flex;gap:8px;align-items:center}
+  .copy-btn{border:none;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.04);cursor:pointer}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  button.btn{height:54px;border-radius:10px;border:none;cursor:pointer;background:var(--glass);color:#e6eef6;font-weight:700}
+  button.btn:active{transform:translateY(1px)}
+  .op{background:linear-gradient(180deg,#ffc857,#ffb703);color:#0c1a1b}
+  .eq{background:linear-gradient(180deg,#7ef7d2,#06d6a0);color:#06201f}
+  .clear{background:linear-gradient(180deg,#ff8ca8,#ef476f);color:#fff}
+  .del{background:linear-gradient(180deg,#dde6ee,#c7d1db);color:#081021}
+  .fn{background:rgba(76,201,240,0.06);color:#76c893}
+  .zero{grid-column:span 2}
+  .history{display:flex;flex-direction:column;gap:10px}
+  .history h3{margin:0;font-size:1rem}
+  .history-list{overflow:auto;max-height:540px;padding:8px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
+  .hist-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;margin-bottom:8px;background:rgba(0,0,0,0.12)}
+  .hist-expr{font-size:0.95rem;color:var(--muted)}
+  .hist-val{font-weight:700;color:var(--accent);margin-left:8px}
+  .hist-actions button{margin-left:6px;border-radius:8px;padding:6px;border:none;background:rgba(255,255,255,0.03);color:inherit;cursor:pointer}
+  .hist-footer{display:flex;gap:8px;justify-content:space-between;align-items:center}
+  .small{font-size:0.85rem;color:var(--muted)}
+  @media (max-width:920px){.app{grid-template-columns:1fr;}.history{order:2}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <section class="card calc" aria-label="آلة حاسبة">
+        <div class="top">
+          <div class="title">آلة حاسبة — الأفضل</div>
+          <div class="controls">
+            <button class="mode" id="modeBtn">DEG</button>
+            <button class="copy-btn" id="copyBtn" title="نسخ النتيجة">نسخ</button>
+          </div>
+        </div>
+
+        <input id="display" class="display" type="text" value="0" aria-label="شاشة الآلة الحاسبة" readonly />
+
+        <div class="grid" id="buttons">
+          <button class="btn clear" data-action="clear">AC</button>
+          <button class="btn fn" data-action="toggle-sign">±</button>
+          <button class="btn fn" data-action="percent">%</button>
+          <button class="btn op" data-value="/">÷</button>
+
+          <button class="btn fn" data-value="sin(">sin</button>
+          <button class="btn fn" data-value="cos(">cos</button>
+          <button class="btn fn" data-value="tan(">tan</button>
+          <button class="btn op" data-value="*">×</button>
+
+          <button class="btn fn" data-value="sqrt(">√</button>
+          <button class="btn fn" data-value="log(">log</button>
+          <button class="btn fn" data-value="ln(">ln</button>
+          <button class="btn op" data-value="-">−</button>
+
+          <button class="btn fn" data-value="(">(</button>
+          <button class="btn fn" data-value=")">)</button>
+          <button class="btn fn" data-value="PI">π</button>
+          <button class="btn op" data-value="+">+</button>
+
+          <button class="btn" data-value="7">7</button>
+          <button class="btn" data-value="8">8</button>
+          <button class="btn" data-value="9">9</button>
+          <button class="btn fn" data-value="^">^</button>
+
+          <button class="btn" data-value="4">4</button>
+          <button class="btn" data-value="5">5</button>
+          <button class="btn" data-value="6">6</button>
+          <button class="btn del" data-action="delete">DEL</button>
+
+          <button class="btn" data-value="1">1</button>
+          <button class="btn" data-value="2">2</button>
+          <button class="btn" data-value="3">3</button>
+          <button class="btn eq" data-action="equals">=</button>
+
+          <button class="btn zero" data-value="0">0</button>
+          <button class="btn" data-value=".">.</button>
+          <button class="btn fn" data-value="E">e</button>
+          <button class="btn fn" data-value="**2">x²</button>
+
+          <button class="btn fn" data-value="!">!</button>
+          <button class="btn fn" data-value="abs(">abs</button>
+          <button class="btn fn" data-value=",">,</button>
+          <button class="btn fn" data-value="pow(">pow</button>
+        </div>
+
+        <div class="small" style="text-align:center;margin-top:8px;color:var(--muted)">
+          اختصارات: أرقام، . + - * / ^ % ( ) Enter =، Backspace حذف، Esc مسح، حروف للدوال (sin, cos, ln, log, pow) — في الوضع DEG الدوال المثل��ية تستقبل درجات.
+        </div>
+      </section>
+
+      <aside class="card history" aria-label="سجل الحسابات">
+        <h3>سجل العمليات</h3>
+        <div class="history-list" id="historyList" role="list" aria-live="polite"></div>
+        <div class="hist-footer">
+          <div class="small" id="histCount">لا توجد عمليات بعد</div>
+          <div>
+            <button id="clearHist" class="mode">مسح السجل</button>
+            <button id="exportHist" class="mode">تنزيل</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+const display = document.getElementById('display');
+const buttons = document.getElementById('buttons');
+const modeBtn = document.getElementById('modeBtn');
+const copyBtn = document.getElementById('copyBtn');
+const historyListEl = document.getElementById('historyList');
+const clearHistBtn = document.getElementById('clearHist');
+const exportHistBtn = document.getElementById('exportHist');
+
+let expr = '';
+let degreeMode = true;
+const HISTORY_KEY = 'calc_best_history_v1';
+let history = loadHistory();
+
+function updateDisplay(){ display.value = expr || '0'; }
+
+function pushHistory(item){
+  history.unshift(item);
+  if(history.length > 200) history.length = 200;
+  saveHistory(); renderHistory();
+}
+function saveHistory(){ localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }catch{ return []; } }
+
+function renderHistory(){
+  historyListEl.innerHTML = '';
+  if(history.length === 0){
+    document.getElementById('histCount').textContent = 'لا توجد عمليات بعد';
+    return;
+  }
+  document.getElementById('histCount').textContent = `عدد العمليات: ${history.length}`;
+  history.forEach((h, idx) => {
+    const row = document.createElement('div'); row.className='hist-row';
+    const left = document.createElement('div'); left.style.display='flex'; left.style.flexDirection='column';
+    const exprEl = document.createElement('div'); exprEl.className='hist-expr'; exprEl.textContent = h.expression;
+    const timeEl = document.createElement('div'); timeEl.className='small'; timeEl.style.color='var(--muted)'; timeEl.textContent = new Date(h.time).toLocaleString();
+    left.appendChild(exprEl); left.appendChild(timeEl);
+    const right = document.createElement('div'); right.style.display='flex'; right.style.alignItems='center';
+    const val = document.createElement('div'); val.className='hist-val'; val.textContent = h.result;
+    const actions = document.createElement('div'); actions.className='hist-actions';
+    const btnUse = document.createElement('button'); btnUse.textContent='استخدم'; btnUse.title='ضع هذا التعبير في الشاشة';
+    const btnCopy = document.createElement('button'); btnCopy.textContent='نسخ'; btnCopy.title='نسخ النتيجة';
+    const btnDel = document.createElement('button'); btnDel.textContent='حذف'; btnDel.title='حذف من السجل';
+    actions.appendChild(btnUse); actions.appendChild(btnCopy); actions.appendChild(btnDel);
+    right.appendChild(val); right.appendChild(actions);
+    row.appendChild(left); row.appendChild(right);
+    historyListEl.appendChild(row);
+
+    btnUse.addEventListener('click', () => { expr = h.expression; updateDisplay(); });
+    btnCopy.addEventListener('click', async () => { 
+      try { await navigator.clipboard.writeText(h.result + ''); alert('تم نسخ النتيجة'); } 
+      catch { alert('تعذر النسخ'); }
+    });
+    btnDel.addEventListener('click', () => { history.splice(idx,1); saveHistory(); renderHistory(); });
+  });
+}
+
+function append(v){
+  if(expr === 'Error') expr = '';
+  expr += v;
+  updateDisplay();
+}
+function clearAll(){ expr=''; updateDisplay(); }
+function deleteLast(){ if(expr === 'Error'){ clearAll(); return; } expr = expr.slice(0,-1); updateDisplay(); }
+function toggleSign(){ if(!expr) return; const m = expr.match(/(.*?)([-+]?\d*\.?\d+)(%)?$/); if(!m) return; const p = m[1] || ''; const n = m[2]; const pr = m[3] || ''; expr = p + ((-parseFloat(n)).toString()) + pr; updateDisplay(); }
+
+function preprocess(input){
+  let e = String(input).trim();
+  e = e.replace(/\s+/g,'');
+  e = e.replace(/[+\-*/^.,]$/,'');
+  e = e.replace(/(\d+(\.\d+)?)%/g,'($1/100)');
+  e = e.replace(/\bPI\b/gi,'PI');
+  e = e.replace(/\bE\b/gi,'E');
+  e = e.replace(/\^/g,'**');
+  e = e.replace(/(\d+(\.\d+)?)!/g,'fact($1)');
+  return e;
+}
+
+function evaluate(){
+  if(!expr) return;
+  let e = preprocess(expr);
+
+  try{
+    const fn = new Function('degreeMode', `
+      const PI = Math.PI; const E = Math.E;
+      const pow = (a,b) => Math.pow(a,b);
+      const sqrt = x => Math.sqrt(x);
+      const abs = x => Math.abs(x);
+      const log = x => Math.log10(x);
+      const ln = x => Math.log(x);
+      const fact = (n) => {
+        const value = Number(n);
+        if (!Number.isFinite(value) || value < 0) throw new Error('Invalid factorial');
+        if (!Number.isInteger(value)) throw new Error('Factorial requires integer');
+        let r = 1; for (let i = 2; i <= value; i++) r *= i; return r;
+      };
+      const sin = x => degreeMode ? Math.sin(x * Math.PI / 180) : Math.sin(x);
+      const cos = x => degreeMode ? Math.cos(x * Math.PI / 180) : Math.cos(x);
+      const tan = x => degreeMode ? Math.tan(x * Math.PI / 180) : Math.tan(x);
+      return (${e});
+    `);
+
+    const result = fn(degreeMode);
+    if(!Number.isFinite(result)) throw new Error('Math error');
+
+    const formatted = Number.isInteger(result) ? String(result) : parseFloat(result.toFixed(12)).toString();
+
+    pushHistory({expression: expr, result: formatted, time: Date.now()});
+    expr = formatted;
+  }catch(err){
+    expr = 'Error';
+  }
+  updateDisplay();
+}
+
+buttons.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('button');
+  if(!btn) return;
+  const val = btn.dataset.value;
+  const action = btn.dataset.action;
+
+  if(action){
+    if(action === 'clear') clearAll();
+    else if(action === 'delete') deleteLast();
+    else if(action === 'toggle-sign') toggleSign();
+    else if(action === 'percent') append('%');
+    else if(action === 'equals') evaluate();
+    return;
+  }
+
+  if(val !== undefined) append(val);
+});
+
+copyBtn.addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(display.value);
+    copyBtn.textContent = 'تم النسخ';
+    setTimeout(()=>copyBtn.textContent = 'نسخ', 900);
+  }catch{
+    alert('فشل النسخ — استخدم النسخ اليدوي');
+  }
+});
+
+modeBtn.addEventListener('click', () => {
+  degreeMode = !degreeMode;
+  modeBtn.textContent = degreeMode ? 'DEG' : 'RAD';
+});
+
+document.addEventListener('keydown', (e) => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  const k = e.key;
+
+  if(k >= '0' && k <= '9'){ append(k); e.preventDefault(); return; }
+  if(k === '.') { append('.'); e.preventDefault(); return; }
+  if(k === '+') { append('+'); e.preventDefault(); return; }
+  if(k === '-') { append('-'); e.preventDefault(); return; }
+  if(k === '*') { append('*'); e.preventDefault(); return; }
+  if(k === '/') { append('/'); e.preventDefault(); return; }
+  if(k === '^') { append('^'); e.preventDefault(); return; }
+  if(k === '(' || k === ')') { append(k); e.preventDefault(); return; }
+  if(k === '%'){ append('%'); e.preventDefault(); return; }
+  if(k === 'Enter' || k === '='){ evaluate(); e.preventDefault(); return; }
+  if(k === 'Backspace'){ deleteLast(); e.preventDefault(); return; }
+  if(k === 'Escape'){ clearAll(); e.preventDefault(); return; }
+  if(k === '!'){ append('!'); e.preventDefault(); return; }
+  if(/^[A-Za-z]$/.test(k)){ append(k); e.preventDefault(); return; }
+});
+
+clearHistBtn.addEventListener('click', ()=>{
+  if(confirm('مسح السجل؟')) { history = []; saveHistory(); renderHistory(); }
+});
+
+exportHistBtn.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(history, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'history.json';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+});
+
+renderHistory();
+updateDisplay();
+</script>
+</body>
+</html>
